@@ -48,7 +48,7 @@ var EmployeeListItem = {
 
 			m('span.icon.icon-trash.remover-usuario', { onclick: function(){
 
-				m.request({ url: 'http://10.0.0.111/contatos/'+ args.employee.id,
+				m.request({ url: 'http://teste.imobzi.com/contatos/'+ args.employee.id,
 				  method: 'POST', serialize: function(){
 				  var data = new FormData();
 				  data.append( 'id', args.employee.id );
@@ -101,7 +101,7 @@ var EmployeePage = {
 	controller: function(args) {
 		var ctrl = this;
 		ctrl.employee = m.prop({});
-		m.request({method: "GET", url: "http://10.0.0.111/contatos/"+m.route.param('Id')+".json"}).then( function(a) { ctrl.employee(a)  } )
+		m.request({method: "GET", url: "http://teste.imobzi.com/contatos/"+m.route.param('Id')+".json"}).then( function(a) { ctrl.employee(a)  } )
 	},
 	view: function(ctrl, args) {
 		return m('div', [
