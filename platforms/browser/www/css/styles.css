@@ -1,0 +1,65 @@
+.content > .table-view:first-child {
+  margin-top: -2px;
+}
+.hidden { opacity: 0; }
+.media-object.big {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+}
+.media-object.small {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+}
+.table-view-cell h1 {
+  font-size: 20px;
+  font-weight: normal;
+  padding: 20px 0 4px 0;
+  margin: 0;
+}
+input[type=search] {
+  border-radius: 8px;
+}
+.card {
+  margin-top:54px;
+}
+#incluir-contato{
+  width: 50px;
+  height: 50px;
+  background: #00C6FF;
+  bottom: 20px;
+  right: 30px;
+  cursor: pointer;
+  border-radius: 100%;
+  position: fixed;
+  text-align: center;
+  line-height: 40px;
+  color: #FFF;
+  font-size: 30pt;
+  z-index: 1;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.remover-usuario{
+  position: absolute;
+  top: 22px;
+  cursor: pointer;
+  right: 30px;
+  color: #F00;
+  background: #CCC;
+  border-radius: 4px;
+  border: 1px solid #000;
+  font-size: 14pt;
+  padding: 4px;
+  z-index: 20;
+}
+.remover-usuario:hover,
+.remover-usuario:active{
+  background: #F00;
+  color: #FFF;
+}
