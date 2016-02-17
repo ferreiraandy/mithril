@@ -20,6 +20,7 @@
 }
 input[type=search] {
   border-radius: 8px;
+  border: 1px solid #C0C0C0;
 }
 .card {
   margin-top:54px;
@@ -32,6 +33,7 @@ input[type=search] {
   right: 30px;
   cursor: pointer;
   border-radius: 100%;
+  border: 2px solid #DADADA;
   position: fixed;
   text-align: center;
   line-height: 40px;
@@ -51,15 +53,54 @@ input[type=search] {
   cursor: pointer;
   right: 30px;
   color: #F00;
-  background: #CCC;
-  border-radius: 4px;
-  border: 1px solid #000;
-  font-size: 14pt;
-  padding: 4px;
+  /*background: #CCC;*/
+  font-size: 11pt;
   z-index: 20;
 }
 .remover-usuario:hover,
 .remover-usuario:active{
-  background: #F00;
-  color: #FFF;
+  color: #333;
+  
+}
+.botao-padrao,
+.botao-padrao2{
+  margin: 10px;
+}
+.botao-padrao .icon{
+  padding: 0px 0px 0px 4px;
+}
+.botao-padrao2 .icon{
+  padding: 0px 4px 0px 0px;
+}
+.botao-padrao2{
+  border: 1px solid #428BCA;
+}
+form#contato{
+  margin: 100px 20px;
+}
+#contato input,
+#contato button{
+  margin: 10px auto;
+  width: 100%;
+}
+#contato input{
+  height: 50px;
+  padding: 10px 20px;
+}
+#mensagens,
+.campo-com-erro,
+.sucesso{
+  display: none;
+  color: #D9534F;
+  border:2px solid #D9534F;
+  padding: 6px 14px;
+  font-weight: 400;
+  font-size:10pt;
+}
+#mensagens{
+  text-align: center;
+}
+.sucesso {
+  color: #5CB85C !important;
+  border:2px solid #5CB85C !important;
 }

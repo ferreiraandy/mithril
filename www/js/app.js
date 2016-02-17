@@ -6,7 +6,6 @@ var Header = {
 				class: 'icon icon-left-nav pull-left' + (args.back ? '' : ' hidden')
 			}),
 			m('h1.title', args.text)
-
 		])
 	}
 };
@@ -24,8 +23,7 @@ var SearchBar = {
 		return m('.bar.bar-standard.bar-header-secondary', [
 			m('input[type=search]', {
 				value: ctrl.searchKey(),
-				oninput: ctrl.searchHandler //oninput fires at each single character change in the field
-					// onchange fires when the field is blurred etc. see https://developer.mozilla.org/en-US/docs/Web/Events/change
+				oninput: ctrl.searchHandler
 			})
 		])
 	}
@@ -33,7 +31,7 @@ var SearchBar = {
 
 var EmployeeListItem = {
 	view: function(ctrl, args) {
-		return m('li.table-view-cell.media', [
+		return m('li#cod-'+ args.employee.id +'.table-view-cell.media', [
 			m('a', {
 				config: m.route,
 				href: '/employees/' + args.employee.id
@@ -46,7 +44,7 @@ var EmployeeListItem = {
 				m('p', args.employee.email)
 			]),
 
-			m('span.icon.icon-trash.remover-usuario', { onclick: function(){
+			m('div.remover-usuario', { onclick: function(){
 
 				m.request({ url: 'http://teste.imobzi.com/contatos/'+ args.employee.id,
 				  method: 'POST', serialize: function(){
@@ -55,11 +53,15 @@ var EmployeeListItem = {
 				  data.append( '_method', 'delete' );
 				  return data;
 				} }).then( function(a){
-					// Se ok reload
-					location.reload(); } )
+					// location.reload();
+					if(a == "Ok"){
+						document.getElementById('cod-'+ args.employee.id).style.display = 'none';
+					}else{
+						alert(a);
+					}
 
-			} })
-
+				} )
+			} }, "Remover")
 		])
 	}
 };
@@ -81,9 +83,11 @@ var HomePage = {
 		return m('div', [
 			m("a#incluir-contato", {
 				config: m.route,
-				href: '/novo' }, "+"),
+				href: '/novo' },
+				m('span.icon.icon-plus')
+			),
 			m.component(Header, {
-				text: 'Funcionários',
+				text: 'Contatos',
 				back: false
 			}),
 			m.component(SearchBar, {
@@ -103,7 +107,11 @@ var EmployeePage = {
 	controller: function(args) {
 		var ctrl = this;
 		ctrl.employee = m.prop({});
-		m.request({method: "GET", url: "http://teste.imobzi.com/contatos/"+m.route.param('Id')+".json"}).then( function(a) { ctrl.employee(a)  } )
+		m.request({method: "GET",
+		url: "http://teste.imobzi.com/contatos/"+m.route.param('Id')+".json"}).then(
+			function(a) {
+			 ctrl.employee(a)
+		} )
 	},
 	view: function(ctrl, args) {
 		return m('div', [
@@ -153,19 +161,20 @@ var EmployeePage = {
 						])
 					]),
 
-					m('a.btn.btn-link', { href: '/' }, [
+					m('a.btn.btn-link.botao-padrao2', { config: m.route, href: '/' }, [
 						m('span.icon.icon-left-nav'),
 						"Retornar"
 					]),
-					m('button.btn.btn-primary', {onclick: function(){ alert("To do") }}, "Editar", [
-						m('span.icon.icon-gear')
-					]),
-					m('button.btn.btn-negative', { onclick: function(){
-
-						m.request({ url: 'http://teste.imobzi.com/contatos/'+ctrl.employee().id,
+					m('a.btn.btn-primary.botao-padrao', {
+						config: m.route, href: '/editar/'+ ctrl.employee().id	}, "Editar",
+						[m('span.icon.icon-gear')]
+					),
+					m('button.btn.btn-negative.botao-padrao', { onclick: function(){
+						var id = ctrl.employee().id;
+						m.request({ url:'http://teste.imobzi.com/contatos/'+ id,
 						  method: 'POST', serialize: function(){
 						  var data = new FormData();
-						  data.append( 'id', ctrl.employee().id );
+						  data.append( 'id', id );
 						  data.append( '_method', 'delete' );
 						  return data;
 						} }).then( function(a){
@@ -184,12 +193,16 @@ var AddContact = {
 	view: function(ctrl){
 		return m('div', [
 			m.component(Header, {
-				text: 'Novo contato', back: true
+				text: 'Novo contato', back: false
 			}),
 
 			m('form#contato', {action: "#", method: "post"}, [
+				m("#mensagens", ""),
+				m("#erro-nome.campo-com-erro", "Nome inválido"),
 				m("input", {id: "nome", placeholder: "Nome", name: 'contato[nome]'}),
+				m("#erro-email.campo-com-erro", "Email inválido"),
 				m("input", {id: "email", placeholder: "Email", name: 'contato[email]'}),
+				m("#erro-telefone.campo-com-erro", "Telefone obrigatório"),
 				m("input", {id: "telefone", placeholder: "Telefone", name: 'contato[Telefone]'}),
 				m("input", {id: "celular", placeholder: "Celular", name: 'contato[celular]'}),
 				m('a.btn.btn-positive.btn-block', { onclick: function(){
@@ -198,6 +211,13 @@ var AddContact = {
 					var email = document.getElementById("email").value;
 					var telefone = document.getElementById("telefone").value;
 					var celular = document.getElementById("celular").value;
+					var erro_nome = document.getElementById("erro-nome");
+					var erro_email = document.getElementById("erro-email");
+					var erro_tel = document.getElementById("erro-telefone");
+
+					if(nome.length <= 3){ erro_nome.style.display = 'block' }else{ erro_nome.style.display = 'none' }
+					if(email.length <= 3){ erro_email.style.display = 'block' }else{ erro_email.style.display = 'none' }
+					if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{ erro_tel.style.display = 'none' }
 
 					if( (nome.length > 3)&&(email.length > 3)&&(telefone.length > 7) ){
 						m.request({ url: "http://teste.imobzi.com/contatos",
@@ -208,13 +228,90 @@ var AddContact = {
 							data.append('contato[telefone]', telefone);
 							data.append('contato[celular]', celular);
 							return data;
-						} }).then( function(){ alert("Sucesso") })
-					}else if(nome.length <= 3){ alert("Nome")
-					}else if(email.length <= 3){ alert("Email")
-					}else{
-						alert("Telefone errado");
+						} }).then( function(a){
+							mensagens = document.getElementById('mensagens');
+							mensagens.style.display = 'block';
+							if(a == "Criado com sucesso"){
+								mensagens.className = 'sucesso';
+								mensagens.innerHTML = 'Contato cadastrado com sucesso';
+								document.getElementById("contato").reset();
+							}else{
+								mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
+								'verifique os campos e/ ou tente novamente mais tarde';
+							}
+						})
 					}
+				} }, "Salvar")
+			])
 
+		])
+	}
+};
+
+var EditContact = {
+	controller: function(args) {
+		var ctrl = this;
+		ctrl.employee = m.prop({});
+		m.request({method: "GET",
+		url: "http://teste.imobzi.com/contatos/"+m.route.param('Id')+".json"}).then(
+			function(a) { ctrl.employee(a) } )
+	},
+	view: function(ctrl, args){
+		return m('div', [
+			m.component(Header, {
+				text: 'Editar contato', back: true
+			}),
+
+			m('form#contato', {action: "#", method: "post"}, [
+				m("#mensagens", ""),
+				m("#erro-nome.campo-com-erro", "Nome inválido"),
+				m("input", {id: "nome", value: ctrl.employee().nome,
+						placeholder: "Nome", name: 'contato[nome]'}),
+				m("#erro-email.campo-com-erro", "Email inválido"),
+				m("input", {id: "email", value: ctrl.employee().email,
+						placeholder: "Email", name: 'contato[email]'}),
+				m("#erro-telefone.campo-com-erro", "Telefone obrigatório"),
+				m("input", {id: "telefone", value: ctrl.employee().telefone,
+						placeholder: "Telefone", name: 'contato[Telefone]'}),
+				m("input", {id: "celular", value: ctrl.employee().celular,
+						placeholder: "Celular", name: 'contato[celular]'}),
+				m('a.btn.btn-positive.btn-block', { onclick: function(){
+
+					var nome = document.getElementById("nome").value;
+					var email = document.getElementById("email").value;
+					var telefone = document.getElementById("telefone").value;
+					var celular = document.getElementById("celular").value;
+					var erro_nome = document.getElementById("erro-nome");
+					var erro_email = document.getElementById("erro-email");
+					var erro_tel = document.getElementById("erro-telefone");
+
+					if(nome.length <= 3){ erro_nome.style.display = 'block' }else{ erro_nome.style.display = 'none' }
+					if(email.length <= 3){ erro_email.style.display = 'block' }else{ erro_email.style.display = 'none' }
+					if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{ erro_tel.style.display = 'none' }
+
+					if( (nome.length > 3)&&(email.length > 3)&&(telefone.length > 7) ){
+						m.request({ url: "http://teste.imobzi.com/contatos/"+ ctrl.employee().id,
+							method: 'POST', serialize: function(){
+							var data = new FormData();
+							data.append('contato[nome]',nome);
+							data.append('contato[email]', email);
+							data.append('contato[telefone]', telefone);
+							data.append('contato[celular]', celular);
+							data.append('_method', 'PUT');
+							return data;
+						} }).then( function(a){
+							mensagens = document.getElementById('mensagens');
+							mensagens.style.display = 'block';
+							if(a == "OK"){
+								mensagens.className += 'sucesso';
+								mensagens.innerHTML = 'Contato editado com sucesso';
+								location.href = '/?/employees/' + ctrl.employee().id
+							}else{
+								mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
+								'verifique os campos e/ ou tente novamente mais tarde';
+							}
+						})
+					}
 				} }, "Salvar")
 			])
 
@@ -257,5 +354,6 @@ m.route(document.body, '/', {
 	'/employees/:Id': m.component(EmployeePage, {
 		service: employeeService
 	}),
-	'/novo': AddContact
+	'/novo': AddContact,
+	'/editar/:Id': EditContact
 })
