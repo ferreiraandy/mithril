@@ -1,6 +1,6 @@
 var Header = {
 	view: function(ctrl, args) {
-		return m('header.bar.bar-nav', [
+		return m('header.barra-titulo.bar.bar-nav', [
 			m('a', {
 				config: m.route,
 				class: 'icon icon-left-nav pull-left' + (args.back ? '' : ' hidden')
@@ -9,6 +9,18 @@ var Header = {
 		])
 	}
 };
+
+var Footer = {
+	view: function(ctrl, args){
+		return m("nav.bar.bar-tab.menu-rodape", [
+			m("a.tab-item", {config: m.route, href: "/"}, [ m("span.icon.icon-home"), m("span.tab-label", "Home") ]),
+			m("a.tab-item", {config: m.route, href: "/contatos"}, [ m("span.icon.icon-person"), m("span.tab-label", "Contatos") ]),
+			m("a.tab-item", {config: m.route, href: "/novo"}, [ m("span.icon.icon-plus"), m("span.tab-label", "Novo contato") ]),
+			m("a.tab-item", {config: m.route, href: "/imoveis"}, [ m("span.icon.icon-home"), m("span.tab-label", "Imoveis") ]),
+			m("a.tab-item", {config: m.route, href: "#"}, [ m("span.icon.icon-plus"), m("span.tab-label", "Novo imóvel") ])
+		])
+	}
+}
 
 var SearchBar = {
 	controller: function(args) {
@@ -20,14 +32,39 @@ var SearchBar = {
 		};
 	},
 	view: function(ctrl) {
-		return m('.bar.bar-standard.bar-header-secondary', [
+		return m('.bar.bar-standard.bar-header-secondary.pesquisa', [
 			m('input[type=search]', {
 				value: ctrl.searchKey(),
+				placeholder: "Pesquisar",
 				oninput: ctrl.searchHandler
 			})
 		])
 	}
 };
+
+var Home = {
+	view: function(){
+		return m("div", [
+			m.component(Header, {
+				text: 'Aplicação teste',
+				back: false
+			}),
+			m(".container.home", [
+				m("div.menu-bloco", [
+					m('a', {config: m.route, href: '/contatos'}, [
+						m("span.icon.icon-person"), m("span", "Contatos"), m("span.icon.icon-right-nav")
+					])
+				]),
+				m("div.menu-bloco", [
+					m('a', {config: m.route, href: '/imoveis'}, [
+						m("span.icon.icon-home"), m("span", "Imóveis"), m("span.icon.icon-right-nav")
+					])
+				])
+			]),
+			m.component(Footer)
+		])
+	}
+}
 
 var EmployeeListItem = {
 	view: function(ctrl, args) {
@@ -78,14 +115,9 @@ var EmployeeList = {
 	}
 }
 
-var HomePage = {
+var contactPage = {
 	view: function(ctrl, args) {
 		return m('div', [
-			m("a#incluir-contato", {
-				config: m.route,
-				href: '/novo' },
-				m('span.icon.icon-plus')
-			),
 			m.component(Header, {
 				text: 'Contatos',
 				back: false
@@ -98,7 +130,8 @@ var HomePage = {
 				m.component(EmployeeList, {
 					employees: args.employees
 				})
-			])
+			]),
+			m.component(Footer)
 		])
 	}
 }
@@ -161,7 +194,7 @@ var EmployeePage = {
 						])
 					]),
 
-					m('a.btn.btn-link.botao-padrao2', { config: m.route, href: '/' }, [
+					m('a.btn.btn-link.botao-padrao2', { config: m.route, href: '/contatos' }, [
 						m('span.icon.icon-left-nav'),
 						"Retornar"
 					]),
@@ -178,72 +211,98 @@ var EmployeePage = {
 						  data.append( '_method', 'delete' );
 						  return data;
 						} }).then( function(a){
-							location.href = '/'; } )
+							location.href = '/?/contatos'; } )
 					} },"Excluir", [
 						m('span.icon.icon-close')
 					])
 
 				])
-			])
+			]),
+			m.component(Footer)
 		])
 	}
 };
 
+// Model
+var Contato = function(data) {
+  data = data || {}
+  this.id = m.prop(data.id || "")
+  this.nome = m.prop(data.nome || "")
+  this.email = m.prop(data.email || "")
+  this.telefone = m.prop(data.telefone || "")
+  this.celular = m.prop(data.celular || "")
+}
+
+
+Contato.save = function(data) {
+	var nome = JSON.parse(JSON.stringify(data["nome"]));
+	var email = JSON.parse(JSON.stringify(data["email"]));
+	var telefone = JSON.parse(JSON.stringify(data["telefone"]));
+	var celular = JSON.parse(JSON.stringify(data["celular"]));
+	var erro_nome = document.getElementById("erro-nome");
+	var erro_email = document.getElementById("erro-email");
+	var erro_tel = document.getElementById("erro-telefone");
+
+	if(nome.length <= 3){ erro_nome.style.display = 'block' }else{ erro_nome.style.display = 'none' }
+	if(email.length <= 3){ erro_email.style.display = 'block' }else{ erro_email.style.display = 'none' }
+	if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{ erro_tel.style.display = 'none' }
+
+	if( (nome.length > 3)&&(email.length > 3)&&(telefone.length > 7) ){
+		return m.request({
+			method: "POST",
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+			url: "http://teste.imobzi.com/contatos",
+			serialize: function(){
+				var dados = new FormData();
+				dados.append('contato[nome]', nome);
+				dados.append('contato[email]', email);
+				dados.append('contato[telefone]', telefone);
+				dados.append('contato[celular]', celular);
+				return dados
+			}
+		}).then( function(a){
+			mensagens = document.getElementById('mensagens');
+			mensagens.style.display = 'block';
+			if(a == "Criado com sucesso"){
+				mensagens.className = 'sucesso';
+				mensagens.innerHTML = 'Contato cadastrado com sucesso';
+				setTimeout(function(){ location.reload() }, 1000)
+			}else{
+				mensagens.className = '';
+				mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
+				'verifique os campos e/ ou tente novamente mais tarde';
+			}
+		})
+	}else{
+		mensagens.style.display = 'none';
+	}
+}
+
 var AddContact = {
-	view: function(ctrl){
+	controller: function(args) {
+		this.contato = m.prop( new Contato() )
+		this.save = function(contato) {
+			Contato.save(contato)
+		}
+	},
+	view: function(ctrl, args) {
+		var contato = ctrl.contato()
 		return m('div', [
-			m.component(Header, {
-				text: 'Novo contato', back: false
-			}),
+			m.component(Header, { text: 'Novo contato', back: false	}),
 
 			m('form#contato', {action: "#", method: "post"}, [
 				m("#mensagens", ""),
+
 				m("#erro-nome.campo-com-erro", "Nome inválido"),
-				m("input", {id: "nome", placeholder: "Nome", name: 'contato[nome]'}),
+				m("input", {id: "nome", placeholder: "Nome", oninput: m.withAttr("value", contato.nome), value: contato.nome()}),
 				m("#erro-email.campo-com-erro", "Email inválido"),
-				m("input", {id: "email", placeholder: "Email", name: 'contato[email]'}),
+				m("input", {id: "email", placeholder: "Email", oninput: m.withAttr("value", contato.email), value: contato.email()}),
 				m("#erro-telefone.campo-com-erro", "Telefone obrigatório"),
-				m("input", {id: "telefone", placeholder: "Telefone", name: 'contato[Telefone]'}),
-				m("input", {id: "celular", placeholder: "Celular", name: 'contato[celular]'}),
-				m('a.btn.btn-positive.btn-block', { onclick: function(){
-
-					var nome = document.getElementById("nome").value;
-					var email = document.getElementById("email").value;
-					var telefone = document.getElementById("telefone").value;
-					var celular = document.getElementById("celular").value;
-					var erro_nome = document.getElementById("erro-nome");
-					var erro_email = document.getElementById("erro-email");
-					var erro_tel = document.getElementById("erro-telefone");
-
-					if(nome.length <= 3){ erro_nome.style.display = 'block' }else{ erro_nome.style.display = 'none' }
-					if(email.length <= 3){ erro_email.style.display = 'block' }else{ erro_email.style.display = 'none' }
-					if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{ erro_tel.style.display = 'none' }
-
-					if( (nome.length > 3)&&(email.length > 3)&&(telefone.length > 7) ){
-						m.request({ url: "http://teste.imobzi.com/contatos",
-							method: 'POST', serialize: function(){
-							var data = new FormData();
-							data.append('contato[nome]',nome);
-							data.append('contato[email]', email);
-							data.append('contato[telefone]', telefone);
-							data.append('contato[celular]', celular);
-							return data;
-						} }).then( function(a){
-							mensagens = document.getElementById('mensagens');
-							mensagens.style.display = 'block';
-							if(a == "Criado com sucesso"){
-								mensagens.className = 'sucesso';
-								mensagens.innerHTML = 'Contato cadastrado com sucesso';
-								document.getElementById("contato").reset();
-							}else{
-								mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
-								'verifique os campos e/ ou tente novamente mais tarde';
-							}
-						})
-					}
-				} }, "Salvar")
-			])
-
+				m("input", {id: "telefone", placeholder: "Telefone", oninput: m.withAttr("value", contato.telefone), value: contato.telefone()}),
+				m("input", {id: "celular", placeholder: "Celular", oninput: m.withAttr("value", contato.celular), value: contato.celular()}),
+				m('a.btn.btn-positive.btn-block.botao-submit', { onclick: ctrl.save.bind(this, contato)	}, "Salvar")
+			]),
+			m.component(Footer)
 		])
 	}
 };
@@ -275,7 +334,7 @@ var EditContact = {
 						placeholder: "Telefone", name: 'contato[Telefone]'}),
 				m("input", {id: "celular", value: ctrl.employee().celular,
 						placeholder: "Celular", name: 'contato[celular]'}),
-				m('a.btn.btn-positive.btn-block', { onclick: function(){
+				m('a.btn.btn-positive.btn-block.botao-submit', { onclick: function(){
 
 					var nome = document.getElementById("nome").value;
 					var email = document.getElementById("email").value;
@@ -305,7 +364,7 @@ var EditContact = {
 							if(a == "OK"){
 								mensagens.className += 'sucesso';
 								mensagens.innerHTML = 'Contato editado com sucesso';
-								location.href = '/?/employees/' + ctrl.employee().id
+								location.href = '/?/employees/' + ctrl.employee().id;
 							}else{
 								mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
 								'verifique os campos e/ ou tente novamente mais tarde';
@@ -313,8 +372,8 @@ var EditContact = {
 						})
 					}
 				} }, "Salvar")
-			])
-
+			]),
+			m.component(Footer)
 		])
 	}
 };
@@ -329,7 +388,7 @@ var App = {
 			employeeService.findByName(searchKey).then(function(employees) {
 				ctrl.employees(employees);
 				ctrl.searchKey(searchKey);
-				ctrl.page(m.component(HomePage, {
+				ctrl.page(m.component(contactPage, {
 					key: 'list',
 					searchHandler: ctrl.searchHandler,
 					searchKey: ctrl.searchKey(),
@@ -348,12 +407,17 @@ var App = {
 };
 
 m.route(document.body, '/', {
-	'/': m.component(App, {
+	'/': Home,
+	'/contatos': m.component(App, {
 		service: employeeService
 	}),
 	'/employees/:Id': m.component(EmployeePage, {
 		service: employeeService
 	}),
-	'/novo': AddContact,
-	'/editar/:Id': EditContact
+	'/novo': m.component(AddContact, {
+		service: employeeService
+	}),
+	'/editar/:Id': m.component(EditContact, {
+		service: employeeService
+	})
 })

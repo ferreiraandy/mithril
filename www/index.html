@@ -12,6 +12,16 @@
 		<link rel="stylesheet" href="css/styles.css" type="text/css">
 		<script src="js/mithril.min.js"></script>
 
+		<script>
+			var db = window.sqlitePlugin.openDatabase({name: 'my.db', androidLockWorkaround: 1});
+
+			db.executeSql("SELECT LENGTH('tenletters') AS stringlength", [], function (res) {
+			  alert('got stringlength: ' + res.rows.item(0).stringlength);
+			}, function(error) {
+			  alert('SELECT error: ' + error.message);
+			});
+		</script>
+
 	</head>
 	<body>
 

@@ -9,11 +9,24 @@
     "installed_plugins": {
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.phonegap.helloworld"
+        },
+        "cordova-sqlite-legacy": {
+            "PACKAGE_NAME": "com.phonegap.helloworld"
         }
     },
     "dependent_plugins": {},
-    "modules": [],
+    "modules": [
+        {
+            "file": "plugins/cordova-sqlite-legacy/www/SQLitePlugin.js",
+            "id": "cordova-sqlite-legacy.SQLitePlugin",
+            "pluginId": "cordova-sqlite-legacy",
+            "clobbers": [
+                "SQLitePlugin"
+            ]
+        }
+    ],
     "plugin_metadata": {
-        "cordova-plugin-whitelist": "1.2.1"
+        "cordova-plugin-whitelist": "1.2.1",
+        "cordova-sqlite-legacy": "0.7.17"
     }
 }

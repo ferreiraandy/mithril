@@ -1,3 +1,6 @@
+body{
+  margin-top: 10px;
+}
 .content > .table-view:first-child {
   margin-top: -2px;
 }
@@ -21,31 +24,69 @@
 input[type=search] {
   border-radius: 8px;
   border: 1px solid #C0C0C0;
+  padding: 20px;
+}
+.pesquisa input{
+  padding: 0px 20px;
+  height: 40px !important;
 }
 .card {
   margin-top:54px;
 }
-#incluir-contato{
-  width: 50px;
-  height: 50px;
-  background: #00C6FF;
-  bottom: 20px;
-  right: 30px;
-  cursor: pointer;
-  border-radius: 100%;
-  border: 2px solid #DADADA;
-  position: fixed;
-  text-align: center;
-  line-height: 40px;
+.content{
+  bottom: 40px;
+  overflow: auto;
+}
+.barra-titulo{
+  background:#303030;
+}
+.barra-titulo h1{
   color: #FFF;
-  font-size: 30pt;
-  z-index: 1;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  font-weight: 500;
+}
+.barra-titulo{
+  background:#303030;
+}
+.barra-titulo .icon-left-nav{
+  color: #FFF;
+}
+.menu-rodape{
+  background: #00C09C;
+  color: #FFF;
+  font-weight: 400;
+  height: 60px;
+}
+.menu-rodape span{
+  color: #FFF;
+}
+.menu-rodape .icon{
+  height: 60px;
+}
+.container.home{
+  margin: 80px auto;
+  text-align: center;
+  width: 100%;
+}
+.menu-bloco{
+  position: relative;
+  margin: 30px auto;
+  width: 98%;
+  background: #00C09C;
+  text-align: left;
+  padding: 30px 20px 30px 30px;
+  border: 1px solid #DADADA;
+  border-radius: 4px;
+}
+.menu-bloco span{
+  margin-right: 20px;
+  color: #FFF;
+}
+.menu-bloco span.icon-right-nav{
+  float: right;
+  margin-right: 10px;
+}
+.botao-submit{
+  margin-top: 10px;
 }
 .remover-usuario{
   position: absolute;
@@ -53,14 +94,12 @@ input[type=search] {
   cursor: pointer;
   right: 30px;
   color: #F00;
-  /*background: #CCC;*/
   font-size: 11pt;
   z-index: 20;
 }
 .remover-usuario:hover,
 .remover-usuario:active{
   color: #333;
-  
 }
 .botao-padrao,
 .botao-padrao2{
@@ -103,4 +142,11 @@ form#contato{
 .sucesso {
   color: #5CB85C !important;
   border:2px solid #5CB85C !important;
+}
+.menu-botao{
+  background: #F00;
+  width: 10%;
+  left: 90%;
+  z-index: 20 ;
+  cursor: pointer;
 }

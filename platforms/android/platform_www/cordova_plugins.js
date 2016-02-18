@@ -5,12 +5,21 @@ module.exports = [
         "id": "cordova-plugin-whitelist.whitelist",
         "pluginId": "cordova-plugin-whitelist",
         "runs": true
+    },
+    {
+        "file": "plugins/cordova-sqlite-legacy/www/SQLitePlugin.js",
+        "id": "cordova-sqlite-legacy.SQLitePlugin",
+        "pluginId": "cordova-sqlite-legacy",
+        "clobbers": [
+            "SQLitePlugin"
+        ]
     }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "cordova-plugin-whitelist": "1.2.1"
+    "cordova-plugin-whitelist": "1.2.1",
+    "cordova-sqlite-legacy": "0.7.17"
 }
 // BOTTOM OF METADATA
 });
