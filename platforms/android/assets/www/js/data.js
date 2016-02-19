@@ -36,7 +36,11 @@ employeeService = (function() {
 	},
 
 	employees = m.prop([]);
-	m.request({method: "GET", url: "http://teste.imobzi.com/contatos"}).then( function(a) { employees = a } );
+	m.request({method: "GET", url: "http://teste.imobzi.com/contatos"}).then(
+ 		function(a) { employees = a.sort(function(a, b) {
+			return a['nome'] > b['nome'] ? 1 : a['nome'] < b['nome'] ? -1 : 0
+		}) }
+	);
 
 	return {
 		findById: findById,

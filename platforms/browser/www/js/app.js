@@ -5,7 +5,8 @@ var Header = {
 				config: m.route,
 				class: 'icon icon-left-nav pull-left' + (args.back ? '' : ' hidden')
 			}),
-			m('h1.title', args.text)
+			m('h1.title', args.text),
+			m('span.icon.icon-refresh.icone-atualizar', {onclick: function(){ location.reload() }})
 		])
 	}
 };
@@ -13,11 +14,28 @@ var Header = {
 var Footer = {
 	view: function(ctrl, args){
 		return m("nav.bar.bar-tab.menu-rodape", [
-			m("a.tab-item", {config: m.route, href: "/"}, [ m("span.icon.icon-home"), m("span.tab-label", "Home") ]),
-			m("a.tab-item", {config: m.route, href: "/contatos"}, [ m("span.icon.icon-person"), m("span.tab-label", "Contatos") ]),
-			m("a.tab-item", {config: m.route, href: "/novo"}, [ m("span.icon.icon-plus"), m("span.tab-label", "Novo contato") ]),
-			m("a.tab-item", {config: m.route, href: "/imoveis"}, [ m("span.icon.icon-home"), m("span.tab-label", "Imoveis") ]),
-			m("a.tab-item", {config: m.route, href: "#"}, [ m("span.icon.icon-plus"), m("span.tab-label", "Novo imóvel") ])
+			m("a.tab-item", {config: m.route, href: "/"}, [
+			  m("span.icon.icon-bars")
+				// m("span.tab-label", "Home")
+			]),
+			m("a.tab-item", {config: m.route, href: "/contatos"}, [
+				m("span.icon.icon-person")
+				// m("span.tab-label", "Contatos")
+			]),
+			m("a.tab-item", {config: m.route, href: "/novo"}, [
+				m("span.icon.icon-person"),
+				m("span.icon.icon-plus.person-plus")
+				// m("span.tab-label", "Add contato")
+			]),
+			m("a.tab-item", {config: m.route, href: "/imoveis"}, [
+				m("span.icon.icon-home")
+				// m("span.tab-label", "Imoveis")
+			]),
+			m("a.tab-item", {config: m.route, href: "/novo-imovel"}, [
+				m("span.icon.icon-home"),
+				m("span.icon.icon-plus.home-plus")
+				// m("span.tab-label", "Add Imóvel")
+			])
 		])
 	}
 }
@@ -46,18 +64,20 @@ var Home = {
 	view: function(){
 		return m("div", [
 			m.component(Header, {
-				text: 'Aplicação teste',
+				text: 'Mithril',
 				back: false
 			}),
 			m(".container.home", [
 				m("div.menu-bloco", [
 					m('a', {config: m.route, href: '/contatos'}, [
-						m("span.icon.icon-person"), m("span", "Contatos"), m("span.icon.icon-right-nav")
+						m("span.icon.icon-person"), m("span", "Contatos"),
+						m("span.icon.icon-right-nav")
 					])
 				]),
 				m("div.menu-bloco", [
 					m('a', {config: m.route, href: '/imoveis'}, [
-						m("span.icon.icon-home"), m("span", "Imóveis"), m("span.icon.icon-right-nav")
+						m("span.icon.icon-home"), m("span", "Imóveis"),
+						m("span.icon.icon-right-nav")
 					])
 				])
 			]),
@@ -90,7 +110,6 @@ var EmployeeListItem = {
 				  data.append( '_method', 'delete' );
 				  return data;
 				} }).then( function(a){
-					// location.reload();
 					if(a == "Ok"){
 						document.getElementById('cod-'+ args.employee.id).style.display = 'none';
 					}else{
@@ -150,7 +169,7 @@ var EmployeePage = {
 		return m('div', [
 			m.component(Header, {
 				text: 'Detalhes',
-				back: true
+				back: false
 			}),
 			m('.card', [
 				m('ul.table-view', [
@@ -168,17 +187,17 @@ var EmployeePage = {
 							href: 'tel:' + ctrl.employee().telefone
 						}, [
 							m('span.media-object.pull-left.icon.icon-call'),
-							m('.media-body', 'Call Office', [
+							m('.media-body', 'Telefone', [
 								m('p', ctrl.employee().telefone)
 							])
 						])
 					]),
 					m('li.table-view-cell.media', [
 						m('a.push-right', {
-							href: 'sms:' + ctrl.employee().celular
+							href: 'cel:' + ctrl.employee().celular
 						}, [
 							m('span.media-object.pull-left.icon.icon-sms'),
-							m('.media-body', 'SMS', [
+							m('.media-body', 'Celular', [
 								m('p', ctrl.employee().celular)
 							])
 						])
@@ -194,7 +213,7 @@ var EmployeePage = {
 						])
 					]),
 
-					m('a.btn.btn-link.botao-padrao2', { config: m.route, href: '/contatos' }, [
+					m('a.btn.btn-link.botao-padrao2',{config: m.route,href:'/contatos'}, [
 						m('span.icon.icon-left-nav'),
 						"Retornar"
 					]),
@@ -211,7 +230,8 @@ var EmployeePage = {
 						  data.append( '_method', 'delete' );
 						  return data;
 						} }).then( function(a){
-							location.href = '/?/contatos'; } )
+							m.route("/contatos")
+						})
 					} },"Excluir", [
 						m('span.icon.icon-close')
 					])
@@ -243,9 +263,12 @@ Contato.save = function(data) {
 	var erro_email = document.getElementById("erro-email");
 	var erro_tel = document.getElementById("erro-telefone");
 
-	if(nome.length <= 3){ erro_nome.style.display = 'block' }else{ erro_nome.style.display = 'none' }
-	if(email.length <= 3){ erro_email.style.display = 'block' }else{ erro_email.style.display = 'none' }
-	if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{ erro_tel.style.display = 'none' }
+	if(nome.length <= 3){ erro_nome.style.display = 'block' }else{
+		erro_nome.style.display = 'none' }
+	if(email.length <= 3){ erro_email.style.display = 'block' }else{
+		erro_email.style.display = 'none' }
+	if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{
+		erro_tel.style.display = 'none' }
 
 	if( (nome.length > 3)&&(email.length > 3)&&(telefone.length > 7) ){
 		return m.request({
@@ -266,7 +289,7 @@ Contato.save = function(data) {
 			if(a == "Criado com sucesso"){
 				mensagens.className = 'sucesso';
 				mensagens.innerHTML = 'Contato cadastrado com sucesso';
-				setTimeout(function(){ location.reload() }, 1000)
+				setTimeout(function(){ location.reload() }, 500)
 			}else{
 				mensagens.className = '';
 				mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
@@ -294,13 +317,21 @@ var AddContact = {
 				m("#mensagens", ""),
 
 				m("#erro-nome.campo-com-erro", "Nome inválido"),
-				m("input", {id: "nome", placeholder: "Nome", oninput: m.withAttr("value", contato.nome), value: contato.nome()}),
+				m("input", {id: "nome", placeholder: "Nome",
+					oninput: m.withAttr("value", contato.nome), value: contato.nome()}),
 				m("#erro-email.campo-com-erro", "Email inválido"),
-				m("input", {id: "email", placeholder: "Email", oninput: m.withAttr("value", contato.email), value: contato.email()}),
+				m("input", {id: "email", placeholder: "Email",
+					oninput: m.withAttr("value", contato.email), value: contato.email()}),
 				m("#erro-telefone.campo-com-erro", "Telefone obrigatório"),
-				m("input", {id: "telefone", placeholder: "Telefone", oninput: m.withAttr("value", contato.telefone), value: contato.telefone()}),
-				m("input", {id: "celular", placeholder: "Celular", oninput: m.withAttr("value", contato.celular), value: contato.celular()}),
-				m('a.btn.btn-positive.btn-block.botao-submit', { onclick: ctrl.save.bind(this, contato)	}, "Salvar")
+				m("input", {id: "telefone", placeholder: "Telefone",
+					oninput: m.withAttr("value", contato.telefone),
+					value: contato.telefone()
+				}),
+				m("input", {id: "celular", placeholder: "Celular",
+					oninput: m.withAttr("value", contato.celular), value: contato.celular()
+				}),
+				m('a.btn.btn-positive.btn-block.botao-submit', {
+					onclick: ctrl.save.bind(this, contato)	}, "Salvar")
 			]),
 			m.component(Footer)
 		])
@@ -344,12 +375,15 @@ var EditContact = {
 					var erro_email = document.getElementById("erro-email");
 					var erro_tel = document.getElementById("erro-telefone");
 
-					if(nome.length <= 3){ erro_nome.style.display = 'block' }else{ erro_nome.style.display = 'none' }
-					if(email.length <= 3){ erro_email.style.display = 'block' }else{ erro_email.style.display = 'none' }
-					if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{ erro_tel.style.display = 'none' }
+					if(nome.length <= 3){ erro_nome.style.display = 'block' }else{
+						erro_nome.style.display = 'none' }
+					if(email.length <= 3){ erro_email.style.display = 'block' }else{
+						erro_email.style.display = 'none' }
+					if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{
+						erro_tel.style.display = 'none' }
 
 					if( (nome.length > 3)&&(email.length > 3)&&(telefone.length > 7) ){
-						m.request({ url: "http://teste.imobzi.com/contatos/"+ ctrl.employee().id,
+						m.request({url:"http://teste.imobzi.com/contatos/"+ctrl.employee().id,
 							method: 'POST', serialize: function(){
 							var data = new FormData();
 							data.append('contato[nome]',nome);
@@ -364,7 +398,7 @@ var EditContact = {
 							if(a == "OK"){
 								mensagens.className += 'sucesso';
 								mensagens.innerHTML = 'Contato editado com sucesso';
-								location.href = '/?/employees/' + ctrl.employee().id;
+								m.route("/employees/"+ ctrl.employee().id)
 							}else{
 								mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
 								'verifique os campos e/ ou tente novamente mais tarde';
@@ -377,6 +411,32 @@ var EditContact = {
 		])
 	}
 };
+
+var Imoveis = {
+  view: function(){
+		return m("div", [
+			m.component(Header, {
+				text: 'Imóveis', back: true
+			}),
+			m("span", "Em construção"),
+			m.component(Footer)
+		]
+	)
+	}
+}
+
+var AddImovel = {
+  view: function(){
+		return m("div", [
+			m.component(Header, {
+				text: 'Novo imóvel', back: true
+			}),
+			m("a.teste-conection", {onclick: function(){ var dbobj; dbobj.transaction(createSchema, errorInSchema, successInSchema) } }, "Em construção"),
+			m.component(Footer)
+		]
+	)
+	}
+}
 
 var App = {
 	controller: function(args) {
@@ -419,5 +479,7 @@ m.route(document.body, '/', {
 	}),
 	'/editar/:Id': m.component(EditContact, {
 		service: employeeService
-	})
+	}),
+	'/imoveis': m.component(Imoveis),
+	'/novo-imovel': m.component(AddImovel)
 })

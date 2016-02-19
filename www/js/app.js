@@ -5,7 +5,8 @@ var Header = {
 				config: m.route,
 				class: 'icon icon-left-nav pull-left' + (args.back ? '' : ' hidden')
 			}),
-			m('h1.title', args.text)
+			m('h1.title', args.text),
+			m('span.icon.icon-refresh.icone-atualizar', {onclick: function(){ location.reload() }})
 		])
 	}
 };
@@ -14,19 +15,26 @@ var Footer = {
 	view: function(ctrl, args){
 		return m("nav.bar.bar-tab.menu-rodape", [
 			m("a.tab-item", {config: m.route, href: "/"}, [
-			  m("span.icon.icon-home"), m("span.tab-label", "Home")
+			  m("span.icon.icon-bars")
+				// m("span.tab-label", "Home")
 			]),
 			m("a.tab-item", {config: m.route, href: "/contatos"}, [
-				m("span.icon.icon-person"), m("span.tab-label", "Contatos")
+				m("span.icon.icon-person")
+				// m("span.tab-label", "Contatos")
 			]),
 			m("a.tab-item", {config: m.route, href: "/novo"}, [
-				m("span.icon.icon-plus"), m("span.tab-label", "Add contato")
+				m("span.icon.icon-person"),
+				m("span.icon.icon-plus.person-plus")
+				// m("span.tab-label", "Add contato")
 			]),
 			m("a.tab-item", {config: m.route, href: "/imoveis"}, [
-				m("span.icon.icon-home"), m("span.tab-label", "Imoveis")
+				m("span.icon.icon-home")
+				// m("span.tab-label", "Imoveis")
 			]),
 			m("a.tab-item", {config: m.route, href: "/novo-imovel"}, [
-				m("span.icon.icon-plus"), m("span.tab-label", "Add Imóvel")
+				m("span.icon.icon-home"),
+				m("span.icon.icon-plus.home-plus")
+				// m("span.tab-label", "Add Imóvel")
 			])
 		])
 	}
@@ -56,7 +64,7 @@ var Home = {
 	view: function(){
 		return m("div", [
 			m.component(Header, {
-				text: 'Aplicação teste',
+				text: 'Mithril',
 				back: false
 			}),
 			m(".container.home", [
@@ -102,7 +110,6 @@ var EmployeeListItem = {
 				  data.append( '_method', 'delete' );
 				  return data;
 				} }).then( function(a){
-					// location.reload();
 					if(a == "Ok"){
 						document.getElementById('cod-'+ args.employee.id).style.display = 'none';
 					}else{
@@ -131,7 +138,7 @@ var contactPage = {
 	view: function(ctrl, args) {
 		return m('div', [
 			m.component(Header, {
-				text: 'Todos os contatos',
+				text: 'Contatos',
 				back: false
 			}),
 			m.component(SearchBar, {
@@ -162,7 +169,7 @@ var EmployeePage = {
 		return m('div', [
 			m.component(Header, {
 				text: 'Detalhes',
-				back: true
+				back: false
 			}),
 			m('.card', [
 				m('ul.table-view', [
@@ -180,17 +187,17 @@ var EmployeePage = {
 							href: 'tel:' + ctrl.employee().telefone
 						}, [
 							m('span.media-object.pull-left.icon.icon-call'),
-							m('.media-body', 'Call Office', [
+							m('.media-body', 'Telefone', [
 								m('p', ctrl.employee().telefone)
 							])
 						])
 					]),
 					m('li.table-view-cell.media', [
 						m('a.push-right', {
-							href: 'sms:' + ctrl.employee().celular
+							href: 'cel:' + ctrl.employee().celular
 						}, [
 							m('span.media-object.pull-left.icon.icon-sms'),
-							m('.media-body', 'SMS', [
+							m('.media-body', 'Celular', [
 								m('p', ctrl.employee().celular)
 							])
 						])
@@ -206,7 +213,7 @@ var EmployeePage = {
 						])
 					]),
 
-					m('a.btn.btn-link.botao-padrao2',{config:m.route,href:'/contatos'}, [
+					m('a.btn.btn-link.botao-padrao2',{config: m.route,href:'/contatos'}, [
 						m('span.icon.icon-left-nav'),
 						"Retornar"
 					]),
@@ -223,7 +230,8 @@ var EmployeePage = {
 						  data.append( '_method', 'delete' );
 						  return data;
 						} }).then( function(a){
-							location.href = '/?/contatos'; } )
+							m.route("/contatos")
+						})
 					} },"Excluir", [
 						m('span.icon.icon-close')
 					])
@@ -281,7 +289,7 @@ Contato.save = function(data) {
 			if(a == "Criado com sucesso"){
 				mensagens.className = 'sucesso';
 				mensagens.innerHTML = 'Contato cadastrado com sucesso';
-				setTimeout(function(){ location.reload() }, 1000)
+				setTimeout(function(){ location.reload() }, 500)
 			}else{
 				mensagens.className = '';
 				mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
@@ -390,7 +398,7 @@ var EditContact = {
 							if(a == "OK"){
 								mensagens.className += 'sucesso';
 								mensagens.innerHTML = 'Contato editado com sucesso';
-								location.href = '/?/employees/' + ctrl.employee().id;
+								m.route("/employees/"+ ctrl.employee().id)
 							}else{
 								mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
 								'verifique os campos e/ ou tente novamente mais tarde';
@@ -408,7 +416,7 @@ var Imoveis = {
   view: function(){
 		return m("div", [
 			m.component(Header, {
-				text: 'Todos os imóveis', back: true
+				text: 'Imóveis', back: true
 			}),
 			m("span", "Em construção"),
 			m.component(Footer)
@@ -416,13 +424,14 @@ var Imoveis = {
 	)
 	}
 }
+
 var AddImovel = {
   view: function(){
 		return m("div", [
 			m.component(Header, {
-				text: 'Adicionar novo Imóvel', back: true
+				text: 'Novo imóvel', back: true
 			}),
-			m("span", "Em construção"),
+			m("a.teste-conection", {onclick: function(){ var dbobj; dbobj.transaction(createSchema, errorInSchema, successInSchema) } }, "Em construção"),
 			m.component(Footer)
 		]
 	)
