@@ -1,0 +1,198 @@
+body{
+  margin-top: 9px;
+}
+.content > .table-view:first-child {
+  margin-top: -2px;
+}
+.hidden { opacity: 0; }
+.media-object.big {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+}
+.media-object.small {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+}
+.table-view-cell h1 {
+  font-size: 20px;
+  font-weight: normal;
+  padding: 20px 0 4px 0;
+  margin: 0;
+}
+input[type=search] {
+  border-radius: 8px;
+  border: 1px solid #C0C0C0;
+  padding: 20px;
+}
+.pesquisa{
+  height: 52px;
+}
+.pesquisa input{
+  padding: 0px 20px;
+  height: 40px !important;
+}
+.card {
+  margin-top:54px;
+}
+#carregando {
+	position:fixed;
+	top:0px;
+	bottom:0px;
+	left:0px;
+	right:0px;
+	z-index:2000;
+  background: #00C1C5;
+  text-align: center;
+}
+#carregando img {
+  position: fixed;
+	width: 100px;
+  height:  63px;
+  top: 50%;
+  left: 50%;
+  margin: -32px 0px 0px -50px;
+}
+.content{
+  bottom: 40px;
+  overflow: auto;
+}
+.barra-titulo{
+  background:#303030;
+}
+.barra-titulo h1{
+  color: #FFF;
+  font-weight: 500;
+}
+.barra-titulo{
+  background:#303030;
+}
+.barra-titulo .icon-left-nav{
+  color: #FFF;
+}
+.menu-rodape{
+  background: #00C1C5;
+  color: #FFF;
+  font-weight: 400;
+  height: 60px;
+}
+.menu-rodape span{
+  color: #FFF;
+}
+.menu-rodape .icon{
+  height: 60px;
+}
+.home-plus,
+.person-plus{
+  position: absolute !important;
+  font-size: 15px !important;
+  margin: 30px -10px;
+}
+.container.home{
+  margin: 50px 5px 0px;
+  text-align: center;
+  width: auto;
+}
+.menu-bloco{
+  position: relative;
+  margin: 15px auto 0px;
+  width: 98%;
+  background: #00C1C5;
+  text-align: left;
+  padding: 30px 20px 30px 30px;
+  border: 1px solid #DADADA;
+  border-radius: 4px;
+}
+.menu-bloco span{
+  margin-right: 20px;
+  color: #FFF;
+}
+.menu-bloco span.icon-right-nav{
+  float: right;
+  margin-right: 10px;
+}
+.botao-submit{
+  margin-top: 10px;
+  background: #00C1C5;
+}
+.remover-usuario{
+  position: absolute;
+  top: 22px;
+  cursor: pointer;
+  right: 30px;
+  color: #F00;
+  font-size: 11pt;
+  z-index: 20;
+}
+.remover-usuario:hover,
+.remover-usuario:active{
+  color: #333;
+}
+.botao-padrao,
+.botao-padrao2{
+  margin: 10px;
+}
+.botao-padrao .icon{
+  padding: 0px 0px 0px 4px;
+}
+.botao-padrao2 .icon{
+  padding: 0px 4px 0px 0px;
+}
+.botao-padrao2{
+  border: 1px solid #428BCA;
+}
+form#contato{
+  margin: 50px 10px;
+}
+#contato input,
+#contato button{
+  margin: 10px auto;
+  width: 100%;
+}
+#contato input{
+  height: 50px;
+  padding: 10px 20px;
+}
+#mensagens,
+.campo-com-erro,
+.sucesso{
+  display: none;
+  color: #D9534F;
+  border:2px solid #D9534F;
+  padding: 6px 14px;
+  font-weight: 400;
+  font-size:10pt;
+}
+#mensagens{
+  text-align: center;
+}
+.sucesso {
+  color: #00C1C5 !important;
+  border:2px solid #00C1C5 !important;
+}
+.menu-botao{
+  background: #F00;
+  width: 10%;
+  left: 90%;
+  z-index: 20 ;
+  cursor: pointer;
+}
+
+.icone-atualizar{
+  cursor: pointer;
+  float: right;
+  right: 15px;
+  color: #FFF;
+}
+
+
+
+.teste-conection{
+  background: red;
+  width: 200px;
+  height: 200px;
+  float: left;
+  margin-top: 100px;
+  z-index: 200;
+}
