@@ -6,9 +6,9 @@ function onDeviceReady() {
   db.transaction(function(tx) {
 
     tx.executeSql('CREATE TABLE IF NOT EXISTS imovels (id integer primary key, cep varchar(10), endereco varchar(200), numero varchar(10), bairro varchar(200), cidade varchar(200), estado varchar(200) )');
-    // db.executeSql("pragma table_info (imovels);", [], function(res) {
-    //   alert("PRAGMA res: " + JSON.stringify(res));
-    // });
+    db.executeSql("pragma table_info (imovels);", [], function(res) {
+      alert("PRAGMA res: " + JSON.stringify(res));
+    });
 
     // Linhas de inserir e selecionar um imóvel
     // tx.executeSql("INSERT INTO imovels (cep,endereco,numero,bairro,cidade,estado) VALUES (?,?,?,?,?,?)",

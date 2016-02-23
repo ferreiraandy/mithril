@@ -94,7 +94,7 @@ var EmployeeListItem = {
 				href: '/employees/' + args.employee.id
 			}, [
 				m('img.media-object.small.pull-left', {
-					src: 'pics/undefined.jpg'
+					src: 'pics/person.jpg'
 				}),
 
 				m('span', args.employee.nome),
@@ -162,7 +162,7 @@ var EmployeePage = {
 		m.request({method: "GET",
 		url: "http://teste.imobzi.com/contatos/"+m.route.param('Id')+".json"}).then(
 			function(a) {
-			 ctrl.employee(a)
+			 ctrl.employee(a);
 		} )
 	},
 	view: function(ctrl, args) {
@@ -175,7 +175,7 @@ var EmployeePage = {
 				m('ul.table-view', [
 					m('li.table-view-cell.media', [
 						m('img.media-object.big.pull-left', {
-							src: 'pics/undefined.jpg'
+							src: 'pics/person.jpg'
 						}),
 						m('h1', [
 							m('span', ctrl.employee().nome)
@@ -312,26 +312,27 @@ var AddContact = {
 		var contato = ctrl.contato()
 		return m('div', [
 			m.component(Header, { text: 'Novo contato', back: false	}),
+			m('div.content', [
+				m('form#contato', {action: "#", method: "post"}, [
+					m("#mensagens", ""),
 
-			m('form#contato', {action: "#", method: "post"}, [
-				m("#mensagens", ""),
-
-				m("#erro-nome.campo-com-erro", "Nome inválido"),
-				m("input", {id: "nome", placeholder: "Nome",
-					oninput: m.withAttr("value", contato.nome), value: contato.nome()}),
-				m("#erro-email.campo-com-erro", "Email inválido"),
-				m("input", {id: "email", placeholder: "Email",
-					oninput: m.withAttr("value", contato.email), value: contato.email()}),
-				m("#erro-telefone.campo-com-erro", "Telefone obrigatório"),
-				m("input", {id: "telefone", placeholder: "Telefone",
-					oninput: m.withAttr("value", contato.telefone),
-					value: contato.telefone()
-				}),
-				m("input", {id: "celular", placeholder: "Celular",
-					oninput: m.withAttr("value", contato.celular), value: contato.celular()
-				}),
-				m('a.btn.btn-positive.btn-block.botao-submit', {
-					onclick: ctrl.save.bind(this, contato)	}, "Salvar")
+					m("#erro-nome.campo-com-erro", "Nome inválido"),
+					m("input", {id: "nome", placeholder: "Nome",
+						oninput: m.withAttr("value", contato.nome), value: contato.nome()}),
+					m("#erro-email.campo-com-erro", "Email inválido"),
+					m("input", {id: "email", placeholder: "Email",
+						oninput: m.withAttr("value", contato.email), value: contato.email()}),
+					m("#erro-telefone.campo-com-erro", "Telefone obrigatório"),
+					m("input", {id: "telefone", placeholder: "Telefone",
+						oninput: m.withAttr("value", contato.telefone),
+						value: contato.telefone()
+					}),
+					m("input", {id: "celular", placeholder: "Celular",
+						oninput: m.withAttr("value", contato.celular), value: contato.celular()
+					}),
+					m('a.btn.btn-positive.btn-block.botao-submit', {
+						onclick: ctrl.save.bind(this, contato)	}, "Salvar")
+				])
 			]),
 			m.component(Footer)
 		])
@@ -351,100 +352,310 @@ var EditContact = {
 			m.component(Header, {
 				text: 'Editar contato', back: true
 			}),
+			m('div.content', [
+				m('form#contato', {action: "#", method: "post"}, [
+					m("#mensagens", ""),
+					m("#erro-nome.campo-com-erro", "Nome inválido"),
+					m("input", {id: "nome", value: ctrl.employee().nome,
+							placeholder: "Nome", name: 'contato[nome]'}),
+					m("#erro-email.campo-com-erro", "Email inválido"),
+					m("input", {id: "email", value: ctrl.employee().email,
+							placeholder: "Email", name: 'contato[email]'}),
+					m("#erro-telefone.campo-com-erro", "Telefone obrigatório"),
+					m("input", {id: "telefone", value: ctrl.employee().telefone,
+							placeholder: "Telefone", name: 'contato[Telefone]'}),
+					m("input", {id: "celular", value: ctrl.employee().celular,
+							placeholder: "Celular", name: 'contato[celular]'}),
+					m('a.btn.btn-positive.btn-block.botao-submit', { onclick: function(){
 
-			m('form#contato', {action: "#", method: "post"}, [
-				m("#mensagens", ""),
-				m("#erro-nome.campo-com-erro", "Nome inválido"),
-				m("input", {id: "nome", value: ctrl.employee().nome,
-						placeholder: "Nome", name: 'contato[nome]'}),
-				m("#erro-email.campo-com-erro", "Email inválido"),
-				m("input", {id: "email", value: ctrl.employee().email,
-						placeholder: "Email", name: 'contato[email]'}),
-				m("#erro-telefone.campo-com-erro", "Telefone obrigatório"),
-				m("input", {id: "telefone", value: ctrl.employee().telefone,
-						placeholder: "Telefone", name: 'contato[Telefone]'}),
-				m("input", {id: "celular", value: ctrl.employee().celular,
-						placeholder: "Celular", name: 'contato[celular]'}),
-				m('a.btn.btn-positive.btn-block.botao-submit', { onclick: function(){
+						var nome = document.getElementById("nome").value;
+						var email = document.getElementById("email").value;
+						var telefone = document.getElementById("telefone").value;
+						var celular = document.getElementById("celular").value;
+						var erro_nome = document.getElementById("erro-nome");
+						var erro_email = document.getElementById("erro-email");
+						var erro_tel = document.getElementById("erro-telefone");
 
-					var nome = document.getElementById("nome").value;
-					var email = document.getElementById("email").value;
-					var telefone = document.getElementById("telefone").value;
-					var celular = document.getElementById("celular").value;
-					var erro_nome = document.getElementById("erro-nome");
-					var erro_email = document.getElementById("erro-email");
-					var erro_tel = document.getElementById("erro-telefone");
+						if(nome.length <= 3){ erro_nome.style.display = 'block' }else{
+							erro_nome.style.display = 'none' }
+						if(email.length <= 3){ erro_email.style.display = 'block' }else{
+							erro_email.style.display = 'none' }
+						if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{
+							erro_tel.style.display = 'none' }
 
-					if(nome.length <= 3){ erro_nome.style.display = 'block' }else{
-						erro_nome.style.display = 'none' }
-					if(email.length <= 3){ erro_email.style.display = 'block' }else{
-						erro_email.style.display = 'none' }
-					if(telefone.length <= 7){ erro_tel.style.display = 'block' }else{
-						erro_tel.style.display = 'none' }
-
-					if( (nome.length > 3)&&(email.length > 3)&&(telefone.length > 7) ){
-						m.request({url:"http://teste.imobzi.com/contatos/"+ctrl.employee().id,
-							method: 'POST', serialize: function(){
-							var data = new FormData();
-							data.append('contato[nome]',nome);
-							data.append('contato[email]', email);
-							data.append('contato[telefone]', telefone);
-							data.append('contato[celular]', celular);
-							data.append('_method', 'PUT');
-							return data;
-						} }).then( function(a){
-							mensagens = document.getElementById('mensagens');
-							mensagens.style.display = 'block';
-							if(a == "OK"){
-								mensagens.className += 'sucesso';
-								mensagens.innerHTML = 'Contato editado com sucesso';
-								m.route("/employees/"+ ctrl.employee().id)
-							}else{
-								mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
-								'verifique os campos e/ ou tente novamente mais tarde';
-							}
-						})
-					}
-				} }, "Salvar")
+						if( (nome.length > 3)&&(email.length > 3)&&(telefone.length > 7) ){
+							m.request({url:"http://teste.imobzi.com/contatos/"+ctrl.employee().id,
+								method: 'POST', serialize: function(){
+								var data = new FormData();
+								data.append('contato[nome]',nome);
+								data.append('contato[email]', email);
+								data.append('contato[telefone]', telefone);
+								data.append('contato[celular]', celular);
+								data.append('_method', 'PUT');
+								return data;
+							} }).then( function(a){
+								mensagens = document.getElementById('mensagens');
+								mensagens.style.display = 'block';
+								if(a == "OK"){
+									mensagens.className += 'sucesso';
+									mensagens.innerHTML = 'Contato editado com sucesso';
+									m.route("/employees/"+ ctrl.employee().id)
+								}else{
+									mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
+									'verifique os campos e/ ou tente novamente mais tarde';
+								}
+							})
+						}
+					} }, "Salvar")
+				])
 			]),
 			m.component(Footer)
 		])
 	}
 };
 
-var Imoveis = {
-  view: function(){
-		return m("div", [
-			m.component(Header, {
-				text: 'Imóveis', back: true
-			}),
-			m("a.teste-conection", {
-				onclick: function(){
-			    db.executeSql("select cep, endereco, numero, bairro from imovels;", function(res) {
-			      alert("Resultado: " + res );
-			    })
-				}
-			}, "Retorne os imóveis"),
-			m.component(Footer)
-		]
-	)
+
+var ImovelListItem = {
+	view: function(ctrl, args) {
+		return m('li#cod-'+ args.imovel.id +'.table-view-cell.media', [
+			m('a', {
+				config: m.route,
+				href: '/imovel/' + args.imovel.id
+			}, [
+				m('img.media-object.small.pull-left', {
+					src: 'pics/imovel.png'
+				}),
+
+				m('span', args.imovel.bairro),
+				m('p', args.imovel.endereco)
+			]),
+
+			m('div.remover-usuario', {onclick: function(){
+
+				var db = window.sqlitePlugin.openDatabase("imobzi.db","1.0","test",20000)
+				db.transaction(function(tx) {
+					tx.executeSql(
+						"delete from imovels where id = "+args.imovel.id, [], function(i) {
+							document.getElementById('cod-'+args.imovel.id).style.display = 'none';
+						}, function(tx, res) {
+							alert('Ocorreu um erro, tente novamente.');
+						}
+					);
+				})
+
+			}}, "Remover")
+		])
+	}
+};
+
+var ImovelList = {
+	view: function(ctrl, args) {
+		var items = args.imoveis.map(function(imovel) {
+			return m.component(ImovelListItem, {
+				key: imovel.id,
+				imovel: imovel
+			})
+		})
+		return m('ul.table-view', items);
 	}
 }
 
-var AddImovel = {
-  view: function(){
-		return m("div", [
+var Imoveis = {
+	view: function(ctrl, args) {
+		return m('div', [
 			m.component(Header, {
-				text: 'Novo imóvel', back: true
+				text: 'Imoveis',
+				back: false
 			}),
-			m("a.teste-conection", {
-				onclick: function(){
-				  alert( db );
-				}
-			}, "Em construção"),
+			m.component(SearchBar, {
+				searchKey: args.searchKey,
+				searchHandler: args.searchHandler
+			}),
+			m('div.content', [
+				m.component(ImovelList, {
+					imoveis: args.imoveis
+				})
+			]),
 			m.component(Footer)
-		]
-	)
+		])
+	}
+}
+
+var NewImovel = function(data) {
+  data = data || {}
+  this.id = m.prop(data.id || "")
+	this.cep = m.prop(data.cep || "")
+  this.endereco = m.prop(data.endereco || "")
+  this.numero = m.prop(data.numero || "")
+  this.bairro = m.prop(data.bairro || "")
+  this.cidade = m.prop(data.cidade || "")
+  this.estado = m.prop(data.estado || "")
+}
+
+var AddImovel = {
+	controller: function(args) {
+		this.imovel = m.prop( new NewImovel() )
+	},
+	view: function(ctrl, args) {
+		var imovel = ctrl.imovel()
+		return m('div', [
+			m.component(Header, { text: 'Novo imóvel', back: false	}),
+			m('div.content', [
+				m('form#imovel', {action: "#", method: "post"}, [
+					m("#mensagens", ""),
+
+					m("#erro-cep.campo-com-erro", "Cep inválido"),
+					m("input", {id: "cep", placeholder: "Cep",
+						oninput: m.withAttr("value", imovel.cep), value: imovel.cep()}),
+					m("#erro-endereco.campo-com-erro", "Endereço inválido"),
+					m("input", {id: "endereco", placeholder: "Endereço",
+						oninput:m.withAttr("value",imovel.endereco),value:imovel.endereco()}),
+					m("input", {id: "numero", placeholder: "Número",
+						oninput: m.withAttr("value", imovel.numero), value: imovel.numero()}),
+					m("#erro-bairro.campo-com-erro", "Bairro inválido"),
+					m("input", {id: "bairro", placeholder: "Bairro",
+						oninput: m.withAttr("value", imovel.bairro), value: imovel.bairro()}),
+					m("input", {id: "cidade", placeholder: "Cidade",
+						oninput: m.withAttr("value", imovel.cidade), value: imovel.cidade()}),
+					m("input", {id: "estado", placeholder: "Estado",
+						oninput: m.withAttr("value", imovel.estado), value: imovel.estado()}),
+
+					m('a.btn.btn-positive.btn-block.botao-submit',{ onclick: function(){
+						var erro_cep = document.getElementById("erro-cep");
+						var erro_endereco = document.getElementById("erro-endereco");
+						var erro_bairro = document.getElementById("erro-bairro");
+
+						var cep = document.getElementById('cep').value;
+						var endereco = document.getElementById('endereco').value;
+						var numero = document.getElementById('numero').value;
+						var bairro = document.getElementById('bairro').value;
+						var cidade = document.getElementById('cidade').value;
+						var estado = document.getElementById('estado').value;
+
+						if(window.sqlitePlugin == undefined){
+							alert("Desculpe nos, mas este tipo de interação só esta permitido no android")
+						}
+
+						if(cep.length <= 8){ erro_cep.style.display = 'block' }else{
+							erro_cep.style.display = 'none' }
+						if(endereco.length <= 5){ erro_endereco.style.display = 'block' }else{
+							erro_endereco.style.display = 'none' }
+						if(bairro.length <= 5){ erro_bairro.style.display = 'block' }else{
+							erro_bairro.style.display = 'none' }
+
+						if((cep.length > 8)&&(endereco.length > 5)&&(bairro.length > 5)){
+							var db = window.sqlitePlugin.openDatabase("imobzi.db","1.0","test",20000)
+							db.transaction(function(tx) {
+								mensagens = document.getElementById('mensagens');
+								mensagens.style.display = 'block';
+
+								tx.executeSql("INSERT INTO imovels (cep,endereco,numero,bairro,cidade,estado) VALUES (?,?,?,?,?,?)",
+						    	[cep,endereco,numero,bairro,cidade,estado], function(tx, res) {
+										mensagens.className = 'sucesso';
+										mensagens.innerHTML = 'Contato cadastrado com sucesso';
+										setTimeout(function(){ location.reload() }, 500)
+									}, function(tx, res) {
+										mensagens.className = '';
+										mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
+										'verifique os campos e/ ou tente novamente mais tarde';
+									}
+								);
+							})
+						}
+
+					}}, "Salvar")
+				])
+			]),
+			m.component(Footer)
+		])
+	}
+}
+
+var ImovelPage = {
+	controller: function(args) {
+		var ctrl = this;
+		ctrl.imovel = m.prop({});
+		var imovel = m.prop();
+
+		var db = window.sqlitePlugin.openDatabase("imobzi.db", "1.0", "test", 20000)
+	  db.transaction(function(tx) {
+			tx.executeSql(
+				"select * from imovels where id = "+ m.route.param("Id"), [], function(tx, res) {
+ 					imovel.push(JSON.stringify(res.rows.item(0)));
+				},function(tx, res) {alert('error: ' + res.message)}
+			)
+		})
+		alert(imovel);
+
+		ctrl.imovel(imovel);
+		alert( JSON.stringify(ctrl.imovel()) );
+
+	},
+	view: function(ctrl, args) {
+		return m('div', [
+			m.component(Header, {
+				text: 'Imóvel Detalhes',
+				back: false
+			}),
+			m('.card', [
+				m('ul.table-view', [
+					m('li.table-view-cell.media', [
+						m('img.media-object.big.pull-left', {
+							src: 'pics/imovel.png'
+						}),
+						m('h1', [
+							m('span', "a" + JSON.stringify(ctrl.imovel()))
+						]),
+						m('p', ctrl.imovel().cep)
+					]),
+					m('li.table-view-cell.media', [
+						m('a.push-right', {
+							href: 'tel:' + ctrl.imovel().cep
+						}, [
+							m('span.media-object.pull-left.icon.icon-call'),
+							m('.media-body', 'Telefone', [
+								m('p', ctrl.imovel().cep)
+							])
+						])
+					]),
+					m('li.table-view-cell.media', [
+						m('a.push-right', {
+							href: 'cel:' + ctrl.imovel().cep
+						}, [
+							m('span.media-object.pull-left.icon.icon-sms'),
+							m('.media-body', 'Celular', [
+								m('p', ctrl.imovel().cep)
+							])
+						])
+					]),
+					m('li.table-view-cell.media', [
+						m('a.push-right', {
+							href: 'mailto:' + ctrl.imovel().email
+						}, [
+							m('span.media-object.pull-left.icon.icon-email'),
+							m('.media-body', 'Email', [
+								m('p', ctrl.imovel().email)
+							])
+						])
+					]),
+
+					m('a.btn.btn-link.botao-padrao2',{config: m.route,href:'/imoveis'}, [
+						m('span.icon.icon-left-nav'),	"Retornar"]
+					),
+					m('a.btn.btn-primary.botao-padrao', {
+						config: m.route, href: '/editar/'+ ctrl.imovel().id	}, "Editar",
+						[m('span.icon.icon-gear')]
+					),
+					m('button.btn.btn-negative.botao-padrao', { onclick: function(){
+						alert("Fazer")
+					} },"Excluir", [
+						m('span.icon.icon-close')
+					])
+
+				])
+			]),
+			m.component(Footer)
+		])
 	}
 }
 
@@ -475,12 +686,41 @@ var App = {
 	}
 };
 
+var ImovelApp = {
+	controller: function(args) {
+		var ctrl = this;
+		ctrl.searchKey = m.prop('');
+		ctrl.imoveis = m.prop([]);
+		ctrl.page = m.prop(null);
+		ctrl.searchHandler = function(searchKey) {
+			imovelService.findByName(searchKey).then(function(imoveis) {
+				ctrl.imoveis(imoveis);
+				ctrl.searchKey(searchKey);
+				ctrl.page(m.component(Imoveis, {
+					key: 'list',
+					searchHandler: ctrl.searchHandler,
+					searchKey: ctrl.searchKey(),
+					imoveis: ctrl.imoveis()
+				}))
+			})
+		}
+	},
+	view: function(ctrl, args) {
+		if (!ctrl.page()) {
+			ctrl.searchHandler(' ')
+		};
+		return ctrl.page()
+	}
+};
+
 m.route(document.body, '/', {
 	'/': Home,
 	'/contatos': m.component(App, { service: employeeService }),
 	'/employees/:Id': m.component(EmployeePage, { service: employeeService }),
 	'/novo': m.component(AddContact, { service: employeeService	}),
 	'/editar/:Id': m.component(EditContact, {	service: employeeService }),
-	'/imoveis': m.component(Imoveis),
-	'/novo-imovel': m.component(AddImovel)
+
+	'/imoveis': m.component(ImovelApp, { service: imovelService }),
+	'/novo-imovel': m.component(AddImovel, { service: imovelService }),
+	'/imovel/:Id': m.component(ImovelPage, { service: imovelService })
 })
