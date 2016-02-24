@@ -575,79 +575,77 @@ var ImovelPage = {
 	controller: function(args) {
 		var ctrl = this;
 		ctrl.imovel = m.prop({});
-		var imovel = m.prop();
 
-		var db = window.sqlitePlugin.openDatabase("imobzi.db", "1.0", "test", 20000)
-	  db.transaction(function(tx) {
-			tx.executeSql(
-				"select * from imovels where id = "+ m.route.param("Id"), [], function(tx, res) {
- 					imovel.push(JSON.stringify(res.rows.item(0)));
-				},function(tx, res) {alert('error: ' + res.message)}
-			)
-		})
-		alert(imovel);
-
-		ctrl.imovel(imovel);
-		alert( JSON.stringify(ctrl.imovel()) );
-
+		if((imoveis)&&(imoveis.length > 0)){
+			for (var i=0; i < imoveis.length; i++) {
+				if(parseInt(imoveis[i]['id']) == parseInt(m.route.param('Id'))){
+					ctrl.imovel(imoveis[i]);
+				}
+			}
+		}else{
+			var db = window.sqlitePlugin.openDatabase("imobzi.db","1.0","test",20000);
+			db.transaction(function(tx) {
+				tx.executeSql("SELECT * FROM imovels WHERE id = "+m.route.param("Id")+";",[],function(p,res){
+					ctrl.imovel(res.rows.item(0));
+				},
+				function(p, res) {	alert('error: ' + res.message);	});
+			})
+		}
 	},
 	view: function(ctrl, args) {
 		return m('div', [
-			m.component(Header, {
-				text: 'Imóvel Detalhes',
-				back: false
-			}),
+			m.component(Header, {text: 'Imóvel Detalhes', back: false}),
+
 			m('.card', [
 				m('ul.table-view', [
+
 					m('li.table-view-cell.media', [
 						m('img.media-object.big.pull-left', {
 							src: 'pics/imovel.png'
 						}),
-						m('h1', [
-							m('span', "a" + JSON.stringify(ctrl.imovel()))
-						]),
-						m('p', ctrl.imovel().cep)
-					]),
-					m('li.table-view-cell.media', [
-						m('a.push-right', {
-							href: 'tel:' + ctrl.imovel().cep
-						}, [
-							m('span.media-object.pull-left.icon.icon-call'),
-							m('.media-body', 'Telefone', [
-								m('p', ctrl.imovel().cep)
-							])
-						])
-					]),
-					m('li.table-view-cell.media', [
-						m('a.push-right', {
-							href: 'cel:' + ctrl.imovel().cep
-						}, [
-							m('span.media-object.pull-left.icon.icon-sms'),
-							m('.media-body', 'Celular', [
-								m('p', ctrl.imovel().cep)
-							])
-						])
-					]),
-					m('li.table-view-cell.media', [
-						m('a.push-right', {
-							href: 'mailto:' + ctrl.imovel().email
-						}, [
-							m('span.media-object.pull-left.icon.icon-email'),
-							m('.media-body', 'Email', [
-								m('p', ctrl.imovel().email)
-							])
-						])
+						m('h1', [m('span', ctrl.imovel().bairro)]),
+						m('p', ctrl.imovel().endereco)
 					]),
 
-					m('a.btn.btn-link.botao-padrao2',{config: m.route,href:'/imoveis'}, [
+					m('li.table-view-cell.media', [
+						m('span.media-object.pull-left.icon.icon-call'),
+						m('.media-body', 'Numero', [m('p', ctrl.imovel().numero)])
+					]),
+
+					m('li.table-view-cell.media', [
+						m('span.media-object.pull-left.icon.icon-call'),
+						m('.media-body', 'Cep', [m('p', ctrl.imovel().cep)])
+					]),
+
+					m('li.table-view-cell.media', [
+						m('span.media-object.pull-left.icon.icon-call'),
+						m('.media-body', 'Cidade', [m('p', ctrl.imovel().cidade)])
+					]),
+					m('li.table-view-cell.media', [
+						m('span.media-object.pull-left.icon.icon-call'),
+						m('.media-body', 'Estado', [m('p', ctrl.imovel().estado)])
+					]),
+
+					m('a.btn.btn-link.botao-padrao2',{config: m.route, href:'/imoveis'}, [
 						m('span.icon.icon-left-nav'),	"Retornar"]
 					),
+
 					m('a.btn.btn-primary.botao-padrao', {
-						config: m.route, href: '/editar/'+ ctrl.imovel().id	}, "Editar",
-						[m('span.icon.icon-gear')]
-					),
+						config: m.route, href: '/editar_imovel/'+ ctrl.imovel().id
+					}, "Editar", [m('span.icon.icon-gear')]),
+
 					m('button.btn.btn-negative.botao-padrao', { onclick: function(){
-						alert("Fazer")
+						var db = window.sqlitePlugin.openDatabase("imobzi.db","1.0","test",20000)
+						db.transaction(function(tx) {
+							tx.executeSql(
+								"delete from imovels where id = "+ctrl.imovel().id, [], function(i) {
+									route("/imoveis");
+								}, function(tx, res) {
+									alert('Ocorreu um erro, tente novamente.');
+								}
+							);
+						})
+
 					} },"Excluir", [
 						m('span.icon.icon-close')
 					])
@@ -657,6 +655,96 @@ var ImovelPage = {
 			m.component(Footer)
 		])
 	}
+}
+
+var ImovelEditar = {
+	controller: function(args) {
+		var ctrl = this;
+		ctrl.imovel = m.prop({});
+
+		var db = window.sqlitePlugin.openDatabase("imobzi.db","1.0","test",20000);
+		db.transaction(function(tx) {
+			tx.executeSql("SELECT * FROM imovels WHERE id = "+m.route.param("Id")+";",[],function(p,res){
+				ctrl.imovel(res.rows.item(0));
+			},
+			function(p, res) {	alert('error: ' + res.message);	});
+		})
+
+	},
+	view: function(ctrl, args) {
+		// var imovel = ctrl.imovel()
+		return m('div', [
+			m.component(Header, { text: 'Novo imóvel', back: false	}),
+			m('div.content', [
+				m('form#imovel', {action: "#", method: "post"}, [
+					m("#mensagens", ""),
+
+					m("#erro-cep.campo-com-erro", "Cep inválido"),
+					m("input", {id: "cep", placeholder: "Cep",
+						oninput: m.withAttr("value", ctrl.imovel().cep), value: ctrl.imovel().cep()}),
+					m("#erro-endereco.campo-com-erro", "Endereço inválido"),
+					m("input", {id: "endereco", placeholder: "Endereço",
+						oninput:m.withAttr("value",ctrl.imovel().endereco),value:ctrl.imovel().endereco()}),
+					m("input", {id: "numero", placeholder: "Número",
+						oninput: m.withAttr("value", ctrl.imovel().numero), value: ctrl.imovel().numero()}),
+					m("#erro-bairro.campo-com-erro", "Bairro inválido"),
+					m("input", {id: "bairro", placeholder: "Bairro",
+						oninput: m.withAttr("value", ctrl.imovel().bairro), value: ctrl.imovel().bairro()}),
+					m("input", {id: "cidade", placeholder: "Cidade",
+						oninput: m.withAttr("value", ctrl.imovel().cidade), value: ctrl.imovel().cidade()}),
+					m("input", {id: "estado", placeholder: "Estado",
+						oninput: m.withAttr("value", ctrl.imovel().estado), value: ctrl.imovel().estado()}),
+
+					m('a.btn.btn-positive.btn-block.botao-submit',{ onclick: function(){
+						var erro_cep = document.getElementById("erro-cep");
+						var erro_endereco = document.getElementById("erro-endereco");
+						var erro_bairro = document.getElementById("erro-bairro");
+
+						var cep = document.getElementById('cep').value;
+						var endereco = document.getElementById('endereco').value;
+						var numero = document.getElementById('numero').value;
+						var bairro = document.getElementById('bairro').value;
+						var cidade = document.getElementById('cidade').value;
+						var estado = document.getElementById('estado').value;
+
+						if(window.sqlitePlugin == undefined){
+							alert("Desculpe nos, mas este tipo de interação só esta permitido no android")
+						}
+
+						if(cep.length <= 8){ erro_cep.style.display = 'block' }else{
+							erro_cep.style.display = 'none' }
+						if(endereco.length <= 5){ erro_endereco.style.display = 'block' }else{
+							erro_endereco.style.display = 'none' }
+						if(bairro.length <= 5){ erro_bairro.style.display = 'block' }else{
+							erro_bairro.style.display = 'none' }
+
+						if((cep.length > 8)&&(endereco.length > 5)&&(bairro.length > 5)){
+							var db = window.sqlitePlugin.openDatabase("imobzi.db","1.0","test",20000)
+							db.transaction(function(tx) {
+								mensagens = document.getElementById('mensagens');
+								mensagens.style.display = 'block';
+
+								tx.executeSql("UPDATE set imovels (cep,endereco,numero,bairro,cidade,estado) VALUES (?,?,?,?,?,?)",
+									[cep,endereco,numero,bairro,cidade,estado], function(tx, res) {
+										mensagens.className = 'sucesso';
+										mensagens.innerHTML = 'Imóvel atualizado com sucesso';
+										m.route("/imovel/"+ m.route.param("Id"))
+									}, function(tx, res) {
+										mensagens.className = '';
+										mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
+										'verifique os campos e/ ou tente novamente mais tarde';
+									}
+								);
+							})
+						}
+
+					}}, "Salvar")
+				])
+			]),
+			m.component(Footer)
+		])
+	}
+
 }
 
 var App = {
@@ -722,5 +810,6 @@ m.route(document.body, '/', {
 
 	'/imoveis': m.component(ImovelApp, { service: imovelService }),
 	'/novo-imovel': m.component(AddImovel, { service: imovelService }),
-	'/imovel/:Id': m.component(ImovelPage, { service: imovelService })
+	'/imovel/:Id': m.component(ImovelPage, { service: imovelService }),
+	'/editar_imovel/:Id': m.component(ImovelEditar, { service: imovelService })
 })

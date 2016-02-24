@@ -54,25 +54,16 @@ imovelService = (function() {
 	      	alert('error: ' + res.message);
 	    	}
 			);
-
-
 		})
 	}
 
 	imoveis = [];
-	// imoveis = [
- // 		{"id": 1, "bairro": "Bairro", "endereco": "Endereço", "numero": 0, "cep": "06900-000", "estado": "SP"},
- // 		{"id": 2, "bairro": "Bairro", "endereco": "Endereço", "numero": 0, "cep": "06900-000", "estado": "SP"},
- // 		{"id": 3, "bairro": "Bairro", "endereco": "Endereço", "numero": 0, "cep": "06900-000", "estado": "SP"},
- // 		{"id": 4, "bairro": "Bairro", "endereco": "Endereço", "numero": 0, "cep": "06900-000", "estado": "SP"},
- // 		{"id": 5, "bairro": "Bairro", "endereco": "Endereço", "numero": 0, "cep": "06900-000", "estado": "SP"}
-	// ];
-
 	document.addEventListener("deviceready", onDeviceReady, false)
 
 	return {
 		findById: findById,
 		findByName: findByName,
+		onDeviceReady: onDeviceReady,
 		findByManager: findByManager
 	}
 }());
