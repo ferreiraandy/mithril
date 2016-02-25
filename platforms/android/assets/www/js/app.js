@@ -16,25 +16,20 @@ var Footer = {
 		return m("nav.bar.bar-tab.menu-rodape", [
 			m("a.tab-item", {config: m.route, href: "/"}, [
 			  m("span.icon.icon-bars")
-				// m("span.tab-label", "Home")
 			]),
 			m("a.tab-item", {config: m.route, href: "/contatos"}, [
 				m("span.icon.icon-person")
-				// m("span.tab-label", "Contatos")
 			]),
 			m("a.tab-item", {config: m.route, href: "/novo"}, [
 				m("span.icon.icon-person"),
 				m("span.icon.icon-plus.person-plus")
-				// m("span.tab-label", "Add contato")
 			]),
 			m("a.tab-item", {config: m.route, href: "/imoveis"}, [
 				m("span.icon.icon-home")
-				// m("span.tab-label", "Imoveis")
 			]),
 			m("a.tab-item", {config: m.route, href: "/novo-imovel"}, [
 				m("span.icon.icon-home"),
 				m("span.icon.icon-plus.home-plus")
-				// m("span.tab-label", "Add Imóvel")
 			])
 		])
 	}
@@ -243,7 +238,6 @@ var EmployeePage = {
 	}
 };
 
-// Model
 var Contato = function(data) {
   data = data || {}
   this.id = m.prop(data.id || "")
@@ -252,7 +246,6 @@ var Contato = function(data) {
   this.telefone = m.prop(data.telefone || "")
   this.celular = m.prop(data.celular || "")
 }
-
 
 Contato.save = function(data) {
 	var nome = JSON.parse(JSON.stringify(data["nome"]));
@@ -461,6 +454,9 @@ var ImovelList = {
 }
 
 var Imoveis = {
+	controller: function(){
+		m.redraw.strategy("all");
+	},
 	view: function(ctrl, args) {
 		return m('div', [
 			m.component(Header, {
@@ -573,6 +569,8 @@ var AddImovel = {
 
 var ImovelPage = {
 	controller: function(args) {
+		m.redraw.strategy("all");
+
 		var ctrl = this;
 		ctrl.imovel = m.prop({});
 
@@ -662,38 +660,38 @@ var ImovelEditar = {
 		var ctrl = this;
 		ctrl.imovel = m.prop({});
 
-		var db = window.sqlitePlugin.openDatabase("imobzi.db","1.0","test",20000);
-		db.transaction(function(tx) {
-			tx.executeSql("SELECT * FROM imovels WHERE id = "+m.route.param("Id")+";",[],function(p,res){
-				ctrl.imovel(res.rows.item(0));
-			},
-			function(p, res) {	alert('error: ' + res.message);	});
-		})
-
+		if((imoveis)&&(imoveis.length > 0)){
+			for (var i=0; i < imoveis.length; i++) {
+				if(parseInt(imoveis[i]['id']) == parseInt(m.route.param('Id'))){
+					ctrl.imovel(imoveis[i]);
+				}
+			}
+		}else{
+			var db = window.sqlitePlugin.openDatabase("imobzi.db","1.0","test",20000);
+			db.transaction(function(tx) {
+				tx.executeSql("SELECT * FROM imovels WHERE id = "+m.route.param("Id")+";",[],function(p,res){
+					ctrl.imovel(res.rows.item(0));
+				},
+				function(p, res) {	alert('error: ' + res.message);	});
+			})
+		}
 	},
 	view: function(ctrl, args) {
-		// var imovel = ctrl.imovel()
 		return m('div', [
-			m.component(Header, { text: 'Novo imóvel', back: false	}),
+			m.component(Header, { text: 'Editar imóvel', back: false	}),
 			m('div.content', [
 				m('form#imovel', {action: "#", method: "post"}, [
 					m("#mensagens", ""),
 
 					m("#erro-cep.campo-com-erro", "Cep inválido"),
-					m("input", {id: "cep", placeholder: "Cep",
-						oninput: m.withAttr("value", ctrl.imovel().cep), value: ctrl.imovel().cep()}),
+					m("input", {id: "cep", placeholder: "Cep", value: ctrl.imovel().cep}),
 					m("#erro-endereco.campo-com-erro", "Endereço inválido"),
-					m("input", {id: "endereco", placeholder: "Endereço",
-						oninput:m.withAttr("value",ctrl.imovel().endereco),value:ctrl.imovel().endereco()}),
-					m("input", {id: "numero", placeholder: "Número",
-						oninput: m.withAttr("value", ctrl.imovel().numero), value: ctrl.imovel().numero()}),
+					m("input", {id: "endereco", placeholder: "Endereço", value: ctrl.imovel().endereco}),
+					m("input", {id: "numero", placeholder: "Número", value: ctrl.imovel().numero}),
 					m("#erro-bairro.campo-com-erro", "Bairro inválido"),
-					m("input", {id: "bairro", placeholder: "Bairro",
-						oninput: m.withAttr("value", ctrl.imovel().bairro), value: ctrl.imovel().bairro()}),
-					m("input", {id: "cidade", placeholder: "Cidade",
-						oninput: m.withAttr("value", ctrl.imovel().cidade), value: ctrl.imovel().cidade()}),
-					m("input", {id: "estado", placeholder: "Estado",
-						oninput: m.withAttr("value", ctrl.imovel().estado), value: ctrl.imovel().estado()}),
+					m("input", {id: "bairro", placeholder: "Bairro", value: ctrl.imovel().bairro}),
+					m("input", {id: "cidade", placeholder: "Cidade", value: ctrl.imovel().cidade}),
+					m("input", {id: "estado", placeholder: "Estado", value: ctrl.imovel().estado}),
 
 					m('a.btn.btn-positive.btn-block.botao-submit',{ onclick: function(){
 						var erro_cep = document.getElementById("erro-cep");
@@ -724,11 +722,14 @@ var ImovelEditar = {
 								mensagens = document.getElementById('mensagens');
 								mensagens.style.display = 'block';
 
-								tx.executeSql("UPDATE set imovels (cep,endereco,numero,bairro,cidade,estado) VALUES (?,?,?,?,?,?)",
-									[cep,endereco,numero,bairro,cidade,estado], function(tx, res) {
+								tx.executeSql("UPDATE imovels set cep = '"+ cep +"',"+
+									"endereco = '"+endereco+"', numero = '"+numero+"',"+
+									"bairro = '"+bairro+"',cidade = '"+cidade+"',"+
+									"estado = '"+estado+"' WHERE id = "+ctrl.imovel().id+";",
+									[], function(tx, res) {
 										mensagens.className = 'sucesso';
 										mensagens.innerHTML = 'Imóvel atualizado com sucesso';
-										m.route("/imovel/"+ m.route.param("Id"))
+										m.route("/imovel/"+ctrl.imovel().id)
 									}, function(tx, res) {
 										mensagens.className = '';
 										mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
@@ -807,7 +808,6 @@ m.route(document.body, '/', {
 	'/employees/:Id': m.component(EmployeePage, { service: employeeService }),
 	'/novo': m.component(AddContact, { service: employeeService	}),
 	'/editar/:Id': m.component(EditContact, {	service: employeeService }),
-
 	'/imoveis': m.component(ImovelApp, { service: imovelService }),
 	'/novo-imovel': m.component(AddImovel, { service: imovelService }),
 	'/imovel/:Id': m.component(ImovelPage, { service: imovelService }),
