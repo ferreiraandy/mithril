@@ -94,6 +94,7 @@ var EmployeeListItem = {
 
 				m('span', args.employee.nome),
 				m('p', args.employee.email)
+				// m('p', args.employee.email.substring(0,20))
 			]),
 
 			m('div.remover-usuario', { onclick: function(){
