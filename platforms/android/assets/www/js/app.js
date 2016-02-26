@@ -94,6 +94,7 @@ var EmployeeListItem = {
 
 				m('span', args.employee.nome),
 				m('p', args.employee.email)
+				// m('p', args.employee.email.substring(0,20))
 			]),
 
 			m('div.remover-usuario', { onclick: function(){
@@ -130,6 +131,9 @@ var EmployeeList = {
 }
 
 var contactPage = {
+	controller: function(){
+
+	},
 	view: function(ctrl, args) {
 		return m('div', [
 			m.component(Header, {
@@ -225,7 +229,7 @@ var EmployeePage = {
 						  data.append( '_method', 'delete' );
 						  return data;
 						} }).then( function(a){
-							m.route("/contatos")
+							m.route("/contatos", {diff: true})
 						})
 					} },"Excluir", [
 						m('span.icon.icon-close')
@@ -392,7 +396,7 @@ var EditContact = {
 								if(a == "OK"){
 									mensagens.className += 'sucesso';
 									mensagens.innerHTML = 'Contato editado com sucesso';
-									m.route("/employees/"+ ctrl.employee().id)
+									m.route("/employees/"+ ctrl.employee().id, {diff: true})
 								}else{
 									mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
 									'verifique os campos e/ ou tente novamente mais tarde';
@@ -455,7 +459,7 @@ var ImovelList = {
 
 var Imoveis = {
 	controller: function(){
-		m.redraw.strategy("all");
+
 	},
 	view: function(ctrl, args) {
 		return m('div', [
@@ -637,7 +641,7 @@ var ImovelPage = {
 						db.transaction(function(tx) {
 							tx.executeSql(
 								"delete from imovels where id = "+ctrl.imovel().id, [], function(i) {
-									route("/imoveis");
+									route("/imoveis", {diff: true});
 								}, function(tx, res) {
 									alert('Ocorreu um erro, tente novamente.');
 								}
@@ -729,7 +733,7 @@ var ImovelEditar = {
 									[], function(tx, res) {
 										mensagens.className = 'sucesso';
 										mensagens.innerHTML = 'Imóvel atualizado com sucesso';
-										m.route("/imovel/"+ctrl.imovel().id)
+										m.route("/imovel/"+ctrl.imovel().id, {diff: true})
 									}, function(tx, res) {
 										mensagens.className = '';
 										mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
@@ -750,6 +754,7 @@ var ImovelEditar = {
 
 var App = {
 	controller: function(args) {
+
 		var ctrl = this;
 		ctrl.searchKey = m.prop('');
 		ctrl.employees = m.prop([]);
@@ -777,6 +782,7 @@ var App = {
 
 var ImovelApp = {
 	controller: function(args) {
+
 		var ctrl = this;
 		ctrl.searchKey = m.prop('');
 		ctrl.imoveis = m.prop([]);
@@ -804,11 +810,11 @@ var ImovelApp = {
 
 m.route(document.body, '/', {
 	'/': Home,
-	'/contatos': m.component(App, { service: employeeService }),
+	'/contatos': m.component(App,{ service: employeeService }),
 	'/employees/:Id': m.component(EmployeePage, { service: employeeService }),
 	'/novo': m.component(AddContact, { service: employeeService	}),
 	'/editar/:Id': m.component(EditContact, {	service: employeeService }),
-	'/imoveis': m.component(ImovelApp, { service: imovelService }),
+	'/imoveis': m.component(ImovelApp, { service: imovelService}),
 	'/novo-imovel': m.component(AddImovel, { service: imovelService }),
 	'/imovel/:Id': m.component(ImovelPage, { service: imovelService }),
 	'/editar_imovel/:Id': m.component(ImovelEditar, { service: imovelService })
