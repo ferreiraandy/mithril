@@ -6,7 +6,9 @@ var Header = {
 				class: 'icon icon-left-nav pull-left' + (args.back ? '' : ' hidden')
 			}),
 			m('h1.title', args.text),
-			m('span.icon.icon-refresh.icone-atualizar', {onclick: function(){ location.reload() }})
+			m('span.icon.icon-refresh.icone-atualizar', {onclick: function(){
+			 location.reload()
+		 	}})
 		])
 	}
 };
@@ -395,7 +397,7 @@ var EditContact = {
 								mensagens.style.display = 'block';
 								if(a == "OK"){
 									mensagens.className += 'sucesso';
-									mensagens.innerHTML = 'Contato editado com sucesso';
+									mensagens.innerHTML = 'Contato atualizado com sucesso';
 									m.route("/employees/"+ ctrl.employee().id, {diff: true})
 								}else{
 									mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+
@@ -733,7 +735,7 @@ var ImovelEditar = {
 									[], function(tx, res) {
 										mensagens.className = 'sucesso';
 										mensagens.innerHTML = 'Imóvel atualizado com sucesso';
-										m.route("/imovel/"+ctrl.imovel().id, {diff: true})
+										m.route("/imovel/" +ctrl.imovel().id, {diff: true})
 									}, function(tx, res) {
 										mensagens.className = '';
 										mensagens.innerHTML = 'Desculpe, alguma coisa deu errado, '+

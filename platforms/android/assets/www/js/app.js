@@ -754,7 +754,7 @@ var ImovelEditar = {
 
 var App = {
 	controller: function(args) {
-
+		m.redraw(true);
 		var ctrl = this;
 		ctrl.searchKey = m.prop('');
 		ctrl.employees = m.prop([]);
